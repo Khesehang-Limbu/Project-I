@@ -38,7 +38,7 @@ function Login() {
         };
         setUser(credentials);
 
-        axios.post("http://localhost:3030/api/login", user, {headers: {
+        axios.post("http://localhost:3030/login", user, {headers: {
             'Content-Type': 'application/json'
             }}).then(res=>{
             console.log(res.status);

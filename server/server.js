@@ -1,27 +1,49 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const cors = require("cors");
+const http = require('http');
+const app = require('./app');
 
+const normalizePort = val => {
+  const port = parseInt(val, 10);
 
+  if (isNaN(port)) {
+    return val;
+  }
+  if (port >= 0) {
+    return port;
+  }
+  return false;
+};
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.urlencoded(true));
+const port = normalizePort(process.env.PORT || '3030');
 
-app.get("/", function(req, res){
-    res.write("<h1>Hellow World</h1>");
+app.set('port', port);
+
+const errorHandler = error => {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+  const address = server.address();
+  const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges.');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use.');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+};
+
+const server = http.createServer(app);
+
+server.on('error', errorHandler);
+server.on('listening', () => {
+  const address = server.address();
+  const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+  console.log('Listening on ' + bind);
 });
 
-app.get("/api", function(req, res){
-    res.json({message: "Hello"});
-});
-
-app.post("/api/login", function(req, res){
-    console.log(req.body);
-});
-
-
-app.listen(3030, function(req, res){
-    console.log("Server Started at port 3030");
-});
+server.listen(port);
